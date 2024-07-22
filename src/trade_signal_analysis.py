@@ -5,10 +5,20 @@ import pytz
 
 class TradeSignalAnalyzer:
     def __init__(self):
-        self.model = joblib.load('models/trained_model.pkl')
+        self.model = None
         self.tz = pytz.timezone('Africa/Tunis')
+        self.load_model()
+
+    def load_model(self):
+        model_path = 'models/trained_model.pkl'
+        if os.path.exists(model_path):
+            self.model = joblib.load(model_path)
+        else:
+            raise FileNotFoundError("Trained model not found. Please train the model first.")
 
     def analyze(self, data):
+        if self.model is None:
+            raise RuntimeError("Model is not loaded.")
         latest_data = data.tail(1)
         features = latest_data[['SMA20', 'EMA50', 'RSI', 'MACD', 'MACD_Signal', 'Bollinger_High', 'Bollinger_Low']]
         prediction = self.model.predict(features)[0]

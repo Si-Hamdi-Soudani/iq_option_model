@@ -4,3 +4,5 @@ ta
 joblib
 iqoptionapi
 pytz
+requests
+websocket-client

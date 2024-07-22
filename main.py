@@ -25,17 +25,20 @@ def main():
     collector = DataCollector(config['email'], config['password'], config['asset'], config['timeframe'])
     engineer = FeatureEngineer()
     trainer = ModelTrainer()
-    analyzer = TradeSignalAnalyzer()
 
     # Step 1: Collect initial data
     initial_data = collector.collect_initial_data(config['num_candles'])
     initial_data = engineer.add_technical_indicators(initial_data)
     initial_data.to_csv('data/historical_data.csv', index=False)
 
-    # Step 2: Train initial model
-    X_train, X_test, y_train, y_test = trainer.prepare_data(initial_data)
-    trainer.train(X_train, y_train)
-    trainer.evaluate(X_test, y_test)
+    # Step 2: Train initial model if it doesn't exist
+    model_path = 'models/trained_model.pkl'
+    if not os.path.exists(model_path):
+        X_train, X_test, y_train, y_test = trainer.prepare_data(initial_data)
+        trainer.train(X_train, y_train)
+        trainer.evaluate(X_test, y_test)
+
+    analyzer = TradeSignalAnalyzer()
 
     # Step 3: Start real-time data collection and analysis
     def real_time_data_collection():
