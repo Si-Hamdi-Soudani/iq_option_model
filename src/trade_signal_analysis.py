@@ -2,6 +2,8 @@ import pandas as pd
 import joblib
 from datetime import datetime, timedelta
 import pytz
+import os
+import logging
 
 class TradeSignalAnalyzer:
     def __init__(self):
@@ -23,9 +25,12 @@ class TradeSignalAnalyzer:
         features = latest_data[['SMA20', 'EMA50', 'RSI', 'MACD', 'MACD_Signal', 'Bollinger_High', 'Bollinger_Low']]
         prediction = self.model.predict(features)[0]
         action = 'buy' if prediction else 'sell'
-        entry_time = datetime.now(self.tz) + timedelta(minutes=2)
+        entry_time = datetime.now(self.tz).replace(second=0, microsecond=0) + timedelta(minutes=1)
+        entry_time_str = entry_time.strftime('%Y-%m-%d %I:%M:%S %p')
         timeframe = self.predict_timeframe(data)
-        return {'action': action, 'entry_time': entry_time, 'timeframe': timeframe}
+        trade_signal = {'action': action, 'entry_time': entry_time_str, 'timeframe': timeframe}
+        logging.info(f"Trade Signal: {trade_signal}")
+        return trade_signal
 
     def predict_timeframe(self, data):
         latest_data = data.tail(10)  # Use the latest 10 data points for pattern recognition

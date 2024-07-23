@@ -13,4 +13,5 @@ class FeatureEngineer:
         df['MACD_Signal'] = ta.trend.macd_signal(df['close'])
         df['Bollinger_High'] = ta.volatility.bollinger_hband(df['close'])
         df['Bollinger_Low'] = ta.volatility.bollinger_lband(df['close'])
-        return df.dropna()
+        df = df.dropna().reset_index(drop=True)  # Drop NaNs and reset index
+        return df

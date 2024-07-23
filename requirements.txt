@@ -6,3 +6,4 @@ iqoptionapi
 pytz
 requests
 websocket-client
+mkdocs-techdocs-core
